@@ -178,7 +178,7 @@
     <div class="body">
       <h1>Christmas for your Mac.</h1>
       <p>This page is decorated the way Tinsel decorates your desktop. The lights around the edge, the snow gathering on these windows, the tree by the Dock: that is the app.</p>
-      <p><b>Drag a window</b> and its snow falls off. <b>Click the tree</b> in the menu bar to change things.</p>
+      <p><b>Shake a window</b> and its snow flies off; drag it gently and the snow rides along. <b>Click the tree</b> in the menu bar to change things.</p>
       <div class="row"><a class="buy" href="https://donbytyci.gumroad.com/l/tinselformac">Buy Tinsel for Mac</a><span class="note" style="margin:0">macOS 27 · Apple silicon</span></div>
     </div>
   </article>
@@ -336,6 +336,9 @@
   // ---- Snow: flakes fall behind the windows; drifts build on top of them and tumble when one is moved.
   const back = $("#flakes"), front = $("#drifts"), bctx = back.getContext("2d"), fctx = front.getContext("2d");
   const wins = $$(".win"), depth = new WeakMap(wins.map(w => [w, 3]));
+  // Each window's last position (in the page, so scrolling is not movement) and speed.
+  const motion = new WeakMap(wins.map(w => [w, { x: 0, y: 0, vx: 0, vy: 0, fresh: true }]));
+  const JOLT = 2600, GRAVITY = 2100, FALL_TIME = 3;
   let W = 0, H = 0, flakes = [], clumps = [], pointer = null;
   function sizeSnow() {
     const ratio = Math.min(devicePixelRatio || 1, 2);
@@ -366,11 +369,13 @@
     }
     ctx.lineTo(x1, base); ctx.lineTo(x1, base + 1); ctx.closePath(); ctx.fill();
   }
-  function tumble(win) {
-    const h = depth.get(win); depth.set(win, 0);
-    if (h < 1 || still) return;
-    const r = win.getBoundingClientRect(), n = Math.min(40, Math.round(r.width / 14));
-    for (let i = 0; i < n; i++) clumps.push({ x: r.left + 12 + Math.random() * (r.width - 24), y: r.top - Math.random() * h, vx: -55 + Math.random() * 110, vy: -70 + Math.random() * 80, size: 3 + Math.random() * 5, age: 0 });
+  function tumble(win, fraction = 1, vx = 0, vy = 0) {
+    const h = depth.get(win);
+    if (h < 0.6 || still) return;
+    depth.set(win, h * (1 - fraction));
+    const r = win.getBoundingClientRect(), n = Math.min(40, Math.round(r.width / 14 * (h / 11) * fraction) + 3);
+    // The snow keeps most of the window's speed, plus a little scatter of its own, then gravity takes over.
+    for (let i = 0; i < n; i++) clumps.push({ x: r.left + 12 + Math.random() * (r.width - 24), y: r.top - Math.random() * h, vx: vx * 0.8 - 50 + Math.random() * 100, vy: vy * 0.8 - 60 + Math.random() * 70, size: (3 + Math.random() * 5) * (0.6 + 0.4 * h / 11), age: 0 });
   }
   let last = 0;
   function frame(now) {
@@ -403,18 +408,32 @@
       bctx.globalAlpha = 1;
     }
     fctx.fillStyle = "#f6faff"; fctx.shadowColor = "rgba(10, 20, 40, 0.45)"; fctx.shadowBlur = 5; fctx.shadowOffsetY = 2;
+    const rects = wins.map(w => w.getBoundingClientRect());
     wins.forEach((win, i) => {
-      const r = win.getBoundingClientRect();
+      const r = rects[i], m = motion.get(win), x = r.left + scrollX, y = r.top + scrollY;
+      // How hard the window was jerked since the last frame: a steady drag carries the snow
+      // along, a shake or a sudden stop throws a share of it off.
+      const vx = m.fresh ? 0 : (x - m.x) / dt, vy = m.fresh ? 0 : (y - m.y) / dt;
+      const jerk = Math.hypot(vx - m.vx, vy - m.vy) / dt;
+      if (jerk > JOLT && depth.get(win) > 0.6) tumble(win, Math.min(1, (jerk - JOLT) / 9000 + 0.35), m.vx, m.vy);
+      const atRest = vx === 0 && vy === 0 && m.vx === 0 && m.vy === 0;
+      Object.assign(m, { x, y, vx, vy, fresh: false });
       let h = depth.get(win);
-      if (state.snow && h < 11) { h = Math.min(11, h + (still ? 11 : 0.8 * dt)); depth.set(win, h); }
+      if (state.snow && atRest && h < 11) { h = Math.min(11, h + (still ? 11 : 0.8 * dt)); depth.set(win, h); }
       if (!state.snow && h > 0) { h = Math.max(0, h - 6 * dt); depth.set(win, h); }
       if (h > 0.5 && r.top > barHeight + 14 && r.top < H) mound(fctx, r.left + 12, r.right - 12, r.top, h, i * 13 + 5);
     });
     fctx.shadowColor = "transparent";
     clumps = clumps.filter(c => {
-      c.age += dt; c.vy += 950 * dt; c.x += c.vx * dt; c.y += c.vy * dt;
-      fctx.globalAlpha = Math.max(0, 1 - c.age / 1.1); fctx.beginPath(); fctx.arc(c.x, c.y, c.size / 2, 0, 6.28); fctx.fill();
-      return c.age < 1.1 && c.y < H + 10;
+      const was = c.y;
+      c.age += dt; c.vy += GRAVITY * dt; c.x += c.vx * dt; c.y += c.vy * dt;
+      // Landing: the first window top edge crossed on the way down takes the snow.
+      if (c.vy > 0) for (let i = 0; i < rects.length; i++) {
+        const r = rects[i];
+        if (c.x >= r.left + 12 && c.x <= r.right - 12 && was <= r.top && c.y > r.top) { depth.set(wins[i], Math.min(11, depth.get(wins[i]) + 0.35)); c.age = FALL_TIME; break; }
+      }
+      fctx.globalAlpha = Math.max(0, Math.min(1, (FALL_TIME - c.age) / 0.6)); fctx.beginPath(); fctx.arc(c.x, c.y, c.size / 2, 0, 6.28); fctx.fill();
+      return c.age < FALL_TIME && c.y < H + 10;
     });
     fctx.globalAlpha = 1;
   }
@@ -422,14 +441,13 @@
   // ---- Windows can be dragged by their title bars; moving one shakes its snow off.
   for (const win of wins) {
     const bar = $(".bar", win);
-    let start = null, moved = false, at = [0, 0];
-    bar.addEventListener("pointerdown", e => { if (e.pointerType === "touch") { tumble(win); return; } start = [e.clientX - at[0], e.clientY - at[1]]; moved = false; bar.setPointerCapture(e.pointerId); });
+    let start = null, at = [0, 0];
+    // A tap on a touch screen stands in for a shake.
+    bar.addEventListener("pointerdown", e => { if (e.pointerType === "touch") { tumble(win); return; } start = [e.clientX - at[0], e.clientY - at[1]]; bar.setPointerCapture(e.pointerId); });
     bar.addEventListener("pointermove", e => {
       if (!start) return;
       at = [e.clientX - start[0], e.clientY - start[1]];
-      if (!moved && Math.hypot(e.movementX, e.movementY) > 0) { moved = true; tumble(win); }
       win.style.transform = `translate(${at[0]}px, ${at[1]}px)`;
-      depth.set(win, 0);
     });
     bar.addEventListener("pointerup", () => { start = null; });
   }
