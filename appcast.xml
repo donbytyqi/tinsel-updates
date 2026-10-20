@@ -7,6 +7,14 @@
         <language>en</language>
         <item>
             <title>1.0</title>
+            <pubDate>Tue, 20 Oct 2026 21:51:56 +0200</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/donbytyqi/tinsel-updates/releases/download/v1.0-4/Tinsel-1.0.dmg" length="4011449" type="application/octet-stream" sparkle:edSignature="sz6C4lz9DUDlYRKEVRAdijG1RG64ds1PX7ycz7IEq8cMMuDKqosKvJGGwUrypYWB2lxcEqS4/eBq4CcdzPTiAg=="/>
+        </item>
+        <item>
+            <title>1.0</title>
             <pubDate>Wed, 14 Oct 2026 12:31:54 +0200</pubDate>
             <sparkle:version>3</sparkle:version>
             <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
