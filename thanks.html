@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Thank you · Tinsel</title>
+<link rel="icon" href="/assets/icon.png">
+<link rel="stylesheet" href="/assets/page.css">
+</head>
+<body>
+<a class="back" href="/"><img src="/assets/icon.png" alt="">Tinsel</a>
+<main class="card">
+  <h1 id="title">Finishing your purchase…</h1>
+  <p id="status">Getting your license key. This takes a few seconds.</p>
+  <div id="done" hidden>
+    <p>Here's your license key:</p>
+    <div class="key" id="key"></div>
+    <div class="row">
+      <a class="button" id="activate" href="#">Open in Tinsel</a>
+      <button class="button quiet" id="copy" type="button">Copy key</button>
+      <a class="button quiet" href="/download">Download Tinsel</a>
+    </div>
+    <h2>To activate</h2>
+    <ol>
+      <li><a href="/download">Download Tinsel</a> and drag it to Applications.</li>
+      <li>Open it and go to <b>Settings › License</b>.</li>
+      <li>Paste the key, or simply enter <b class="email"></b>, and click <b>Activate</b>.</li>
+    </ol>
+    <p id="mailed" hidden>We've also emailed the key to <b class="email"></b>. Keep it as your proof of purchase.</p>
+    <p id="saved" hidden>Keep a copy of this key. If you ever lose it, the email you paid with, <b class="email"></b>, activates Tinsel too.</p>
+    <p>Tinsel is yours on every Mac you own.</p>
+  </div>
+  <p id="help" hidden>Something not right? Email <a href="mailto:support@tinselapp.com">support@tinselapp.com</a> with the address you paid with and we'll sort it out. Paddle has also emailed you a receipt.</p>
+</main>
+<footer><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a></footer>
+<script>
+// Shows the buyer's key. The link carries the Paddle transaction and email; the license server checks both with Paddle.
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  history.replaceState(null, "", "/thanks"); // keep the lookup out of history and screenshots of the address bar
+
+  async function load(attempt = 0) {
+    const q = new URLSearchParams({ txn: params.get("txn") ?? "", email: params.get("email") ?? "" });
+    const r = await fetch("https://api.tinselapp.com/purchase?" + q).catch(() => null);
+    const body = r ? await r.json().catch(() => ({})) : {};
+    if (r?.ok && body.key) {
+      $("title").textContent = "Thank you for buying Tinsel";
+      $("status").hidden = true;
+      $("key").textContent = body.key;
+      $("activate").href = "tinsel://activate?key=" + encodeURIComponent(body.key);
+      document.querySelectorAll(".email").forEach((b) => (b.textContent = body.email));
+      // Only claim an email once the server says sending is set up.
+      $("mailed").hidden = !body.emailed;
+      $("saved").hidden = !!body.emailed;
+      $("done").hidden = false;
+      $("help").hidden = false;
+      return;
+    }
+    // A payment can take a moment to settle; retry for about a minute.
+    if ((!r || r.status === 503 || r.status === 404) && attempt < 12) return setTimeout(() => load(attempt + 1), 5000);
+    $("title").textContent = "We couldn't show your key";
+    $("status").textContent = (body.error ?? "Something went wrong.") + " Your purchase is safe: open Tinsel and enter the email you paid with to activate it.";
+    $("status").className = "error";
+    $("help").hidden = false;
+  }
+
+  $("copy").addEventListener("click", async () => {
+    await navigator.clipboard.writeText($("key").textContent);
+    $("copy").textContent = "Copied";
+  });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -7,7 +7,8 @@
 <meta name="description" content="Christmas for your Mac: a tree by the Dock, lights around the screen, and snow that settles on your windows. This page is decorated the way Tinsel decorates your desktop.">
 <meta property="og:title" content="Tinsel for Mac">
 <meta property="og:description" content="A tree by the Dock, lights around the screen, and snow that settles on your windows.">
-<meta property="og:image" content="assets/social.jpg">
+<meta property="og:image" content="https://tinselapp.com/assets/social.jpg">
+<link rel="canonical" href="https://tinselapp.com/">
 <meta name="theme-color" content="#0d1326">
 <link rel="icon" href="assets/icon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -94,9 +95,14 @@
   .w4 { width: min(540px, 100%); margin-left: auto; }
   .w5 { width: min(820px, 100%); margin-left: 8%; }
   .w6 { width: min(620px, 100%); margin-left: auto; margin-right: 10%; }
+  .w7 { width: min(780px, 100%); margin-left: 12%; }
+  .clip { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0b0f1c; }
 
   .buy { display: inline-block; background: var(--red); color: #fff; font-weight: 600; text-decoration: none; padding: 10px 18px; border-radius: 9px; }
   .buy:hover { background: #ef5b60; }
+  .quiet { color: var(--soft); font-weight: 600; text-decoration: none; padding: 10px 6px; }
+  .quiet:hover { color: var(--text); }
+  .note a { color: var(--soft); }
   .note { font-size: 13.5px; color: var(--faint); margin-top: 14px; }
   .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .choices { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
@@ -127,7 +133,7 @@
   @media (max-width: 720px) {
     .menubar a.jump { display: none; }
     main { padding-top: 110px; gap: 56px; }
-    .win, .w2, .w3, .w4, .w5, .w6 { width: 100%; margin-left: 0; margin-right: 0; }
+    .win, .w2, .w3, .w4, .w5, .w6, .w7 { width: 100%; margin-left: 0; margin-right: 0; }
     .win .body { padding: 20px; }
     .dock a:not(.app):not(.get), .dock hr { display: none; }
     #tree { height: 150px; right: 4px; }
@@ -143,13 +149,14 @@
   <strong>Tinsel</strong>
   <a class="jump" href="#tree-window">Tree</a>
   <a class="jump" href="#lights-window">Lights</a>
+  <a class="jump" href="#notch-window">Notch</a>
   <a class="jump" href="#snow-window">Snow</a>
   <a class="jump" href="#sounds-window">Sounds</a>
   <span class="spring"></span>
   <button class="status" id="status" aria-label="Tinsel controls" aria-expanded="true" aria-controls="popover">
     <svg viewBox="0 0 24 24"><path d="M12 3l4.7 6H15l3.7 5H17l3.7 5H3.3L7 14H5.3L9 9H7.3z"/><path d="M12 19v3"/></svg>
   </button>
-  <a href="https://donbytyci.gumroad.com/l/tinselformac">Buy</a>
+  <a href="#buy">Buy</a>
 </div>
 
 <div class="popover" id="popover">
@@ -179,7 +186,7 @@
       <h1>Christmas for your Mac.</h1>
       <p>This page is decorated the way Tinsel decorates your desktop. The lights around the edge, the snow gathering on these windows, the tree by the Dock: that is the app.</p>
       <p><b>Shake a window</b> and its snow flies off; drag it gently and the snow rides along. <b>Click the tree</b> in the menu bar to change things.</p>
-      <div class="row"><a class="buy" href="https://donbytyci.gumroad.com/l/tinselformac">Buy Tinsel for Mac</a><span class="note" style="margin:0">macOS 15 or later · Apple silicon</span></div>
+      <div class="row"><a class="buy" href="#buy">Buy Tinsel for Mac · $4.99</a><a class="quiet" href="/download">Download</a><span class="note" style="margin:0">macOS 15 or later · Apple silicon</span></div>
     </div>
   </article>
 
@@ -201,9 +208,18 @@
     <div class="bar"><i></i><i></i><i></i><span>Lights</span></div>
     <div class="body">
       <h2>One string, all the way round.</h2>
-      <p>A single cable hangs from hook to hook around your screen and climbs over the Dock, as it does around this page. Turn on <b>Dance to music</b> and the bulbs pulse with whatever is playing. Or choose <b>Small mode</b> for one short string around the notch.</p>
+      <p>A single cable hangs from hook to hook around your screen and climbs over the Dock, as it does around this page. Turn on <b>Dance to music</b> and the bulbs pulse with whatever is playing. Or choose <a href="#notch-window"><b>Small mode</b></a> for one short string around the notch.</p>
       <div class="choices" data-set="pattern"><button>Steady</button><button>Twinkle</button><button>Chase</button><button>Fade</button></div>
       <div class="choices" data-set="bulbs"><button>Classic</button><button>Warm White</button><button>Icicle</button><button>Candy Cane</button></div>
+    </div>
+  </article>
+
+  <article class="win w7" id="notch-window">
+    <div class="bar"><i></i><i></i><i></i><span>Small mode</span></div>
+    <div class="body">
+      <h2>Or just a little string around the notch.</h2>
+      <p>Prefer something quieter? <b>Small mode</b> hangs one short string of half-size bulbs around your MacBook's notch, out of the way of everything you do. On a Mac without a notch it hangs over Tinsel's icon in the menu bar. One switch in the menu bar turns it on.</p>
+      <video class="shot clip" src="assets/notch-mode.mp4" poster="assets/notch-mode.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="A MacBook with Tinsel in small mode: the view zooms in to a short string of twinkling lights hanging around the notch while snow falls"></video>
     </div>
   </article>
 
@@ -235,10 +251,10 @@
         <dt>Season</dt><dd>December 1 to January 6 unless you say otherwise. It hides in full-screen apps and stays out of screen sharing.</dd>
         <dt>Light</dt><dd>About 1% of your CPU at 30 fps and nothing at all when matching your display, with the snow drawn by the GPU. It rests whenever your screen does.</dd>
         <dt>Privacy</dt><dd>No accounts, no analytics. It asks for a permission only when you switch on the feature that needs it.</dd>
-        <dt>License</dt><dd>One purchase covers the Macs you own. Updates arrive inside the app.</dd>
+        <dt>License</dt><dd>$4.99, once, for every Mac you own. Updates arrive inside the app. Already bought? <a href="/download">Download Tinsel</a> and activate it with your key or the email you paid with.</dd>
       </dl>
-      <p style="margin-top:24px"><a class="buy" href="https://donbytyci.gumroad.com/l/tinselformac">Buy Tinsel for Mac</a></p>
-      <p class="note">© <span id="year"></span> Don Bytyqi. Weather data from MET Norway.</p>
+      <p style="margin-top:24px"><a class="buy" href="#buy">Buy Tinsel for Mac · $4.99</a></p>
+      <p class="note">© <span id="year"></span> Don Bytyqi. Weather data from MET Norway.<br><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/refund">Refunds</a> · <a href="mailto:support@tinselapp.com">support@tinselapp.com</a></p>
     </div>
   </article>
 </main>
@@ -249,10 +265,11 @@
   <a class="app" href="#top" aria-label="Tinsel"><img src="assets/icon.png" alt=""></a>
   <a href="#tree-window" aria-label="Tree"><svg viewBox="0 0 24 24"><path d="M12 3l4.7 6H15l3.7 5H17l3.7 5H3.3L7 14H5.3L9 9H7.3z"/><path d="M12 19v3"/></svg></a>
   <a href="#lights-window" aria-label="Lights"><svg viewBox="0 0 24 24"><path d="M9 14l-1.6-2.2A6 6 0 1 1 16.6 11.8L15 14z"/><path d="M9 18h6M10 22h4"/></svg></a>
+  <a href="#notch-window" aria-label="Small mode"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M10 5v1.5h4V5"/><path d="M2 19h20"/></svg></a>
   <a href="#snow-window" aria-label="Snow"><svg viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M20 16l-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></a>
   <a href="#sounds-window" aria-label="Sounds"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
   <hr>
-  <a class="get" href="https://donbytyci.gumroad.com/l/tinselformac">Buy</a>
+  <a class="get" href="#buy">Buy</a>
 </nav>
 <img id="tree" src="assets/tree-nordic-fir.png" alt="A Christmas tree standing beside the Dock. Click to change its style.">
 <svg id="lights" aria-hidden="true"></svg>
@@ -261,6 +278,7 @@
 (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const $ = (s, root = document) => root.querySelector(s), $$ = (s, root = document) => [...root.querySelectorAll(s)];
+  if (still) $$("video[autoplay]").forEach(v => { v.removeAttribute("autoplay"); v.pause(); v.controls = true; });
   const state = { tree: true, lights: true, snow: true, treeStyle: 0, pattern: 1, bulbs: 0, snowType: 1 };
   const names = {
     treeStyle: ["Nordic Fir", "Snowy Spruce", "Pixel Pine", "Paper Cut"], pattern: ["Steady", "Twinkle", "Chase", "Fade"], snowType: ["Powder", "Fluffy", "Crystals", "Blizzard"],
@@ -496,5 +514,7 @@
   requestAnimationFrame(frame);
 })();
 </script>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script src="assets/buy.js"></script>
 </body>
 </html>
