@@ -96,6 +96,7 @@
   .w5 { width: min(820px, 100%); margin-left: 8%; }
   .w6 { width: min(620px, 100%); margin-left: auto; margin-right: 10%; }
   .w7 { width: min(780px, 100%); margin-left: 12%; }
+  .w8 { width: min(700px, 100%); margin-left: auto; margin-right: 4%; }
   .clip { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0b0f1c; }
 
   .buy { display: inline-block; background: var(--red); color: #fff; font-weight: 600; text-decoration: none; padding: 10px 18px; border-radius: 9px; }
@@ -118,6 +119,23 @@
   dd { margin: 0; color: var(--soft); }
   .sleeps { font: 400 64px/1 var(--serif); color: var(--gold); }
 
+  /* Schedule: what a call sees, and when the season runs */
+  .views { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0 30px; }
+  .views figure { margin: 0; }
+  .views figcaption { font-size: 12.5px; color: var(--faint); margin-top: 8px; text-align: center; }
+  .screen { position: relative; aspect-ratio: 16 / 10; border-radius: 8px; background: linear-gradient(160deg, #1d2a48, #0b1020); border: 1px solid var(--line); overflow: hidden; }
+  .screen::before { content: ""; position: absolute; left: 14%; top: 22%; width: 58%; height: 52%; border-radius: 5px; background: #262c36; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4); }
+  .screen .string { position: absolute; left: 4px; right: 4px; top: 4px; height: 12px; filter: drop-shadow(0 0 4px rgba(246, 198, 103, 0.8));
+    background: radial-gradient(circle, var(--red) 0 3px, transparent 3.6px) 0 50% / 36px 12px repeat-x, radial-gradient(circle, var(--gold) 0 3px, transparent 3.6px) 12px 50% / 36px 12px repeat-x, radial-gradient(circle, var(--pine) 0 3px, transparent 3.6px) 24px 50% / 36px 12px repeat-x; }
+  .screen .pine { position: absolute; right: 7%; bottom: 6%; width: 18%; height: 40%; background: var(--pine); clip-path: polygon(50% 0, 100% 100%, 0 100%); opacity: 0.9; }
+  .screen .rec { position: absolute; left: 8px; bottom: 8px; font-size: 10.5px; font-weight: 600; color: #fff; background: rgba(229, 72, 77, 0.85); padding: 1px 7px; border-radius: 5px; }
+  .season { position: relative; margin: 34px 0 8px; }
+  .season .track { height: 10px; border-radius: 5px; background: var(--raised); position: relative; }
+  .season .on { position: absolute; top: 0; bottom: 0; left: calc(30 / 92 * 100%); width: calc(37 / 92 * 100%); border-radius: 5px; background: linear-gradient(90deg, var(--red), var(--gold), var(--pine)); }
+  .season .pin { position: absolute; top: -22px; transform: translateX(-50%); font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  .season .months { display: grid; grid-template-columns: 30fr 31fr 31fr; font-size: 12px; color: var(--faint); margin-top: 8px; }
+  .season .months span + span { border-left: 1px solid var(--line); padding-left: 6px; }
+
   /* Dock and tree */
   .dock { position: fixed; left: 50%; bottom: 8px; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 22px;
           background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
@@ -133,7 +151,7 @@
   @media (max-width: 720px) {
     .menubar a.jump { display: none; }
     main { padding-top: 110px; gap: 56px; }
-    .win, .w2, .w3, .w4, .w5, .w6, .w7 { width: 100%; margin-left: 0; margin-right: 0; }
+    .win, .w2, .w3, .w4, .w5, .w6, .w7, .w8 { width: 100%; margin-left: 0; margin-right: 0; }
     .win .body { padding: 20px; }
     .dock a:not(.app):not(.get), .dock hr { display: none; }
     #tree { height: 150px; right: 4px; }
@@ -152,6 +170,7 @@
   <a class="jump" href="#notch-window">Notch</a>
   <a class="jump" href="#snow-window">Snow</a>
   <a class="jump" href="#sounds-window">Sounds</a>
+  <a class="jump" href="#schedule-window">Schedule</a>
   <span class="spring"></span>
   <button class="status" id="status" aria-label="Tinsel controls" aria-expanded="true" aria-controls="popover">
     <svg viewBox="0 0 24 24"><path d="M12 3l4.7 6H15l3.7 5H17l3.7 5H3.3L7 14H5.3L9 9H7.3z"/><path d="M12 19v3"/></svg>
@@ -241,6 +260,26 @@
     </div>
   </article>
 
+  <article class="win w8" id="schedule-window">
+    <div class="bar"><i></i><i></i><i></i><span>Schedule</span></div>
+    <div class="body">
+      <h2>Never in your Zoom call.</h2>
+      <p>Share your screen or record it and the decorations stay out of the picture. <b>You still see them; the call doesn't.</b> No switch to remember before the meeting: it's on from the start.</p>
+      <div class="views" aria-hidden="true">
+        <figure><div class="screen"><span class="string"></span><span class="pine"></span></div><figcaption>Your screen</figcaption></figure>
+        <figure><div class="screen"><span class="rec">● Sharing</span></div><figcaption>What Zoom, Meet and recordings see</figcaption></figure>
+      </div>
+      <h2>It puts itself up, and takes itself down.</h2>
+      <p>Tinsel waits for <b>December 1</b>, decorates your Mac, and packs everything away on <b>January 6</b>, Twelfth Night. Choose your own dates if you like, or set it to count down to the New Year instead of Christmas. It also steps aside for full-screen apps.</p>
+      <div class="season" role="img" aria-label="A timeline from November to January with the season highlighted from December 1 to January 6">
+        <span class="pin" style="left:calc(30 / 92 * 100%)">Dec 1</span>
+        <span class="pin" style="left:calc(67 / 92 * 100%)">Jan 6</span>
+        <div class="track"><div class="on"></div></div>
+        <div class="months"><span>November</span><span>December</span><span>January</span></div>
+      </div>
+    </div>
+  </article>
+
   <article class="win w6">
     <div class="bar"><i></i><i></i><i></i><span>Details</span></div>
     <div class="body">
@@ -248,7 +287,7 @@
       <p id="sleeps-caption" style="margin-bottom:22px">sleeps until Christmas</p>
       <dl>
         <dt>Needs</dt><dd>macOS 15 Sequoia or later, on a Mac with Apple silicon.</dd>
-        <dt>Season</dt><dd>December 1 to January 6 unless you say otherwise. It hides in full-screen apps and stays out of screen sharing.</dd>
+        <dt>Season</dt><dd>December 1 to January 6 unless you say otherwise. It hides in full-screen apps and <a href="#schedule-window">stays out of screen sharing</a>.</dd>
         <dt>Light</dt><dd>About 1% of your CPU at 30 fps and nothing at all when matching your display, with the snow drawn by the GPU. It rests whenever your screen does.</dd>
         <dt>Privacy</dt><dd>No accounts, no analytics. It asks for a permission only when you switch on the feature that needs it.</dd>
         <dt>License</dt><dd>$4.99, once, for every Mac you own. Updates arrive inside the app. Already bought? <a href="/download">Download Tinsel</a> and activate it with your key or the email you paid with.</dd>
@@ -268,6 +307,7 @@
   <a href="#notch-window" aria-label="Small mode"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M10 5v1.5h4V5"/><path d="M2 19h20"/></svg></a>
   <a href="#snow-window" aria-label="Snow"><svg viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M20 16l-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></svg></a>
   <a href="#sounds-window" aria-label="Sounds"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
+  <a href="#schedule-window" aria-label="Schedule"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></a>
   <hr>
   <a class="get" href="#buy">Buy</a>
 </nav>
